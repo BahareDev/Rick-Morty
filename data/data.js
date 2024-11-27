@@ -16,6 +16,7 @@ export const character = {
   image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
   created: "2017-11-04T18:48:46.250Z",
 };
+
 export const allCharacters = [
   {
     id: 1,
