@@ -1,8 +1,40 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { character, episodes } from "../../data/data";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
 
-export default function CharacterDetail() {
+export default function CharacterDetail({ selcetId }) {
+  const [character, setCharacter] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        setCharacter(null);
+        const { data } = await axios.get(
+          `https://rickandmortyapi.com/api/character/${selcetId}`
+        );
+
+        setCharacter(data);
+      } catch (err) {
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    if (selcetId) fetchData();
+  }, [selcetId]);
+
+  if (isLoading) return;
+  <div style={{ flex: 1 }}>loading... </div>;
+
+  if (!character || !selcetId)
+    return (
+      <div style={{ flex: 1, color: "var(--slate-300)" }}>
+        please select a character
+      </div>
+    );
+
   return (
     <div style={{ flex: 1 }}>
       <div className="character-detail">
