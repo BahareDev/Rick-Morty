@@ -47,7 +47,7 @@ export default function App() {
       </Navbar>
       <div className="main">
         <CharacterList
-        selcetId={selcetId}
+          selcetId={selcetId}
           characters={character}
           isLoading={isLoading}
           OnselectCharacter={handleSelectchar}
