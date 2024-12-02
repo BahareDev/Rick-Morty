@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { character, episodes } from "../../data/data";
+import React, { useEffect, useState } from "react";
 import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function CharacterDetail({ selcetId }) {
+export default function CharacterDetail({ selcetId, onAddFav, isAddFav }) {
   const [character, setCharacter] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [episodes, setEpisodes] = useState([]);
@@ -36,7 +35,7 @@ export default function CharacterDetail({ selcetId }) {
   }, [selcetId]);
 
   if (isLoading) return;
-  <div style={{ flex: 1 }}>loading... </div>;
+  <div style={{ flex: 1 }}> loading... </div>;
 
   if (!character || !selcetId)
     return (
@@ -74,7 +73,16 @@ export default function CharacterDetail({ selcetId }) {
           </div>
 
           <div className="actions">
-            <button className="btn btn--primary">Add to favourite</button>
+            {isAddFav ? (
+              <p>This is added already</p>
+            ) : (
+              <button
+                onClick={() => onAddFav(character)}
+                className="btn btn--primary"
+              >
+                Add to favourite
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -101,3 +109,5 @@ export default function CharacterDetail({ selcetId }) {
     </div>
   );
 }
+
+function characterSubInfo() {}
