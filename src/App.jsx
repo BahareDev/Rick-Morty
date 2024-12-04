@@ -4,6 +4,7 @@ import "./App.css";
 import Navbar, { Favourites, Search, SearchResult } from "./component/Navbar";
 import CharacterList from "./component/CharacterList";
 import CharacterDetail from "./component/CharacterDetail";
+import Modal from "./component/Modal";
 import { allCharacters, character } from "../data/data";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
@@ -13,7 +14,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setquery] = useState("");
   const [selcetId, setSelectedID] = useState(null);
-  const [favourite, setFavourites] = useState([]);
+  const [favourite, setFavourites] = useState(() => JSON.parse(localStorage.getItem('favourite'))||[]);
 
   const handleSelectchar = (id) => {
     setSelectedID((prevId) => (prevId === id ? null : id));
@@ -21,6 +22,10 @@ export default function App() {
 
   const handleFav = (char) => {
     setFavourites((prevFav) => [...prevFav, char]);
+  };
+
+  const handleDeleteFav = (id) => {
+    setFavourites(favourite.filter((fav) => fav.id != id));
   };
 
   const isAddFav = favourite.map((item) => item.id).includes(selcetId);
@@ -56,13 +61,18 @@ export default function App() {
     };
   }, [query]);
 
+  useEffect(() => {
+    localStorage.setItem("favourite", JSON.stringify(favourite));
+  }, [favourite]);
+
   return (
     <div className="app">
       <Toaster />
+
       <Navbar>
         <Search query={query} setquery={setquery} />
         <SearchResult character={character} isLoading={isLoading} />
-        <Favourites numOfFavourites={favourite.length} />
+        <Favourites favourites={favourite} onDeleteFav={handleDeleteFav}  />
       </Navbar>
       <div className="main">
         <CharacterList
