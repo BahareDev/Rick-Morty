@@ -4,17 +4,19 @@ import "./App.css";
 import Navbar, { Favourites, Search, SearchResult } from "./component/Navbar";
 import CharacterList from "./component/CharacterList";
 import CharacterDetail from "./component/CharacterDetail";
-import Modal from "./component/Modal";
-import { allCharacters, character } from "../data/data";
-import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+import { Toaster } from "react-hot-toast";
+import { useCharacters } from "./hooks/useCharacters";
 
 export default function App() {
-  const [character, setCharacters] = useState(allCharacters);
-  const [isLoading, setIsLoading] = useState(false);
   const [query, setquery] = useState("");
+  const { isLoading, character } = useCharacters(
+    "https://rickandmortyapi.com/api/character",
+    query
+  );
   const [selcetId, setSelectedID] = useState(null);
-  const [favourite, setFavourites] = useState(() => JSON.parse(localStorage.getItem('favourite'))||[]);
+  const [favourite, setFavourites] = useState(
+    () => JSON.parse(localStorage.getItem("favourite")) || []
+  );
 
   const handleSelectchar = (id) => {
     setSelectedID((prevId) => (prevId === id ? null : id));
@@ -31,37 +33,6 @@ export default function App() {
   const isAddFav = favourite.map((item) => item.id).includes(selcetId);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-
-        const { data } = await axios.get(
-          `https://rickandmortyapi.com/api/character?name=${query}`,
-          { signal }
-        );
-
-        setCharacters(data.results);
-      } catch (err) {
-        // err handeling in clean up function
-        if (!axios.isCancel()) {
-          setCharacters([]);
-          toast.error(err.response.data.error);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-
-    // Clean up Function
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
-
-  useEffect(() => {
     localStorage.setItem("favourite", JSON.stringify(favourite));
   }, [favourite]);
 
@@ -72,7 +43,7 @@ export default function App() {
       <Navbar>
         <Search query={query} setquery={setquery} />
         <SearchResult character={character} isLoading={isLoading} />
-        <Favourites favourites={favourite} onDeleteFav={handleDeleteFav}  />
+        <Favourites favourites={favourite} onDeleteFav={handleDeleteFav} />
       </Navbar>
       <div className="main">
         <CharacterList
