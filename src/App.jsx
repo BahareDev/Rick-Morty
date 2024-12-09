@@ -6,6 +6,7 @@ import CharacterList from "./component/CharacterList";
 import CharacterDetail from "./component/CharacterDetail";
 import { Toaster } from "react-hot-toast";
 import { useCharacters } from "./hooks/useCharacters";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 export default function App() {
   const [query, setquery] = useState("");
@@ -13,10 +14,9 @@ export default function App() {
     "https://rickandmortyapi.com/api/character",
     query
   );
+
   const [selcetId, setSelectedID] = useState(null);
-  const [favourite, setFavourites] = useState(
-    () => JSON.parse(localStorage.getItem("favourite")) || []
-  );
+  const [favourite, setFavourites] = useLocalStorage("favourite", []);
 
   const handleSelectchar = (id) => {
     setSelectedID((prevId) => (prevId === id ? null : id));
@@ -31,10 +31,6 @@ export default function App() {
   };
 
   const isAddFav = favourite.map((item) => item.id).includes(selcetId);
-
-  useEffect(() => {
-    localStorage.setItem("favourite", JSON.stringify(favourite));
-  }, [favourite]);
 
   return (
     <div className="app">
